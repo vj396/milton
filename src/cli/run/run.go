@@ -16,6 +16,7 @@ import (
 type runCmd struct {
 	configFile      string
 	modelsDirectory string
+	plugins         []string
 	debug           bool
 
 	cmd *cobra.Command
@@ -35,7 +36,7 @@ func (c *runCmd) run(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(os.Stderr, "Error loading custom config: %s\n", err.Error())
 		os.Exit(1)
 	}
-	milton.Start(done, log, conf, c.modelsDirectory)
+	milton.Start(done, log, conf, c.modelsDirectory, c.plugins)
 }
 
 func init() {
@@ -48,6 +49,7 @@ func init() {
 	}
 	run.cmd.Flags().StringVarP(&run.configFile, "config", "c", "", "Path to config yaml file")
 	run.cmd.Flags().StringVarP(&run.modelsDirectory, "models-dir", "d", "", "Path to models directory")
+	run.cmd.Flags().StringSliceVarP(&run.plugins, "plugins", "x", []string{}, "Plugins to enables, ex: opsgenie, pagerduty")
 	run.cmd.Flags().BoolVarP(&run.debug, "debug", "v", false, "Enable debug logging")
 	run.cmd.MarkFlagRequired("config")
 	run.cmd.MarkFlagRequired("models-dir")

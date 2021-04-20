@@ -20,7 +20,7 @@ func init() {
 	}
 }
 
-func (qc *queueCmd) ProcessMessage(b types.Backend, message *types.MessageMetadata) (*types.MessageMetadata, error) {
+func (qc *queueCmd) ProcessMessage(b types.Backend, message *types.MessageMetadata) *types.MessageMetadata {
 	fields := strings.Fields(message.Message)
 	if len(fields) == 1 {
 		return qc.getChannelQueue(b, message)
@@ -28,18 +28,18 @@ func (qc *queueCmd) ProcessMessage(b types.Backend, message *types.MessageMetada
 	return qc.updateChannelQueue(b, message)
 }
 
-func (qc *queueCmd) getChannelQueue(b types.Backend, m *types.MessageMetadata) (*types.MessageMetadata, error) {
+func (qc *queueCmd) getChannelQueue(b types.Backend, m *types.MessageMetadata) *types.MessageMetadata {
 	i := types.Interrupt{
 		ChannelId: m.ChannelID,
 	}
 	elements, err := b.GetInterruptRecordsForChannel(&i)
 	if err != nil {
 		m.Message = "error getting queue for channel"
-		return m, nil
+		return m
 	}
 	if elements == nil {
 		m.Message = "queue for the channel is empty"
-		return m, nil
+		return m
 	}
 	var payload []string
 	for idx := range elements {
@@ -47,10 +47,10 @@ func (qc *queueCmd) getChannelQueue(b types.Backend, m *types.MessageMetadata) (
 		payload = append(payload, p)
 	}
 	m.Message = strings.Join(payload, "\n")
-	return m, nil
+	return m
 }
 
-func (qc *queueCmd) updateChannelQueue(b types.Backend, m *types.MessageMetadata) (*types.MessageMetadata, error) {
+func (qc *queueCmd) updateChannelQueue(b types.Backend, m *types.MessageMetadata) *types.MessageMetadata {
 	fields := strings.Fields(m.Message)
 	fields = fields[1:]
 	m.Message = ""
@@ -78,7 +78,7 @@ func (qc *queueCmd) updateChannelQueue(b types.Backend, m *types.MessageMetadata
 		m.Message += " Errors:"
 		m.Message += fmt.Sprintf(" %+v\n", errs)
 	}
-	return m, nil
+	return m
 }
 
 func (qc *queueCmd) Usage() string {

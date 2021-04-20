@@ -20,11 +20,11 @@ func init() {
 	}
 }
 
-func (rc *returnCmd) ProcessMessage(b types.Backend, m *types.MessageMetadata) (*types.MessageMetadata, error) {
+func (rc *returnCmd) ProcessMessage(b types.Backend, m *types.MessageMetadata) *types.MessageMetadata {
 	fields := strings.Fields(m.Message)
 	if len(fields) == 1 {
 		m.Message = "not enough arguments provided"
-		return m, nil
+		return m
 	}
 	fields = fields[1:]
 	m.Message = ""
@@ -61,7 +61,7 @@ func (rc *returnCmd) ProcessMessage(b types.Backend, m *types.MessageMetadata) (
 		m.Message += fmt.Sprintf("<@%+s>: %+v\n", u, work[u])
 	}
 	m.Message += message
-	return m, nil
+	return m
 }
 
 func (rc *returnCmd) Usage() string {

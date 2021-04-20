@@ -19,7 +19,7 @@ func init() {
 	}
 }
 
-func (hc *helpCmd) ProcessMessage(b types.Backend, message *types.MessageMetadata) (*types.MessageMetadata, error) {
+func (hc *helpCmd) ProcessMessage(b types.Backend, message *types.MessageMetadata) *types.MessageMetadata {
 	registry := slack.GetRegistry()
 	var payload []string
 	for cmd, plugin := range registry {
@@ -27,7 +27,7 @@ func (hc *helpCmd) ProcessMessage(b types.Backend, message *types.MessageMetadat
 		payload = append(payload, r)
 	}
 	message.Message = strings.Join(payload, "\n")
-	return message, nil
+	return message
 }
 
 func (hc *helpCmd) Usage() string {

@@ -12,6 +12,7 @@ import (
 	"github.com/slack-go/slack/slackevents"
 	"github.com/slack-go/slack/socketmode"
 	"github.com/vj396/milton/src/backend"
+	"github.com/vj396/milton/src/opsgenie"
 	slackPkg "github.com/vj396/milton/src/slack"
 	"github.com/vj396/milton/src/types"
 	"go.uber.org/zap"
@@ -23,6 +24,7 @@ import (
 
 const (
 	defaultProcessQueueSize = 100
+	opsgeniePlugin          = "opsgenie"
 )
 
 type bot struct {
@@ -36,7 +38,7 @@ type bot struct {
 	logger *zap.Logger
 }
 
-func Start(done chan struct{}, logger *zap.Logger, conf *types.Config, modelsDir string) {
+func Start(done chan struct{}, logger *zap.Logger, conf *types.Config, modelsDir string, plugins []string) {
 	var err error
 	b := new(bot)
 	b.logger = logger
@@ -51,6 +53,9 @@ func Start(done chan struct{}, logger *zap.Logger, conf *types.Config, modelsDir
 	cmds := []string{}
 	for cmd := range slackPkg.GetRegistry() {
 		cmds = append(cmds, cmd)
+	}
+	if plugins != nil {
+		b.setupPlugins(plugins, conf)
 	}
 	b.cmdRegex = regexp.MustCompile(fmt.Sprintf("^(%s)", strings.Join(cmds, "|")))
 	b.processQueue = make(chan *types.MessageMetadata, defaultProcessQueueSize)
@@ -70,6 +75,15 @@ func Start(done chan struct{}, logger *zap.Logger, conf *types.Config, modelsDir
 	go b.run(ctx, &wg)
 	<-done
 	cancel()
+}
+
+func (b *bot) setupPlugins(plugins []string, conf *types.Config) {
+	for idx := range plugins {
+		switch strings.ToLower(plugins[idx]) {
+		case opsgeniePlugin:
+			opsgenie.Set(conf.Opsgenie)
+		}
+	}
 }
 
 func (b *bot) run(ctx context.Context, wg *sync.WaitGroup) {
@@ -139,11 +153,7 @@ func (b *bot) processQueueChannel(ctx context.Context, wg *sync.WaitGroup) {
 		case e := <-b.processQueue:
 			s := strings.Fields(e.Message)
 			p := slackPkg.GetRegistry()[strings.ToLower(s[0])]
-			r, err := p.ProcessMessage(b.backend, e)
-			if err != nil {
-				b.logger.Error(err.Error())
-				continue
-			}
+			r := p.ProcessMessage(b.backend, e)
 			b.responseQueue <- r
 		}
 	}

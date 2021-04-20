@@ -13,6 +13,6 @@ type MessageMetadata struct {
 }
 
 type Plugin interface {
-	ProcessMessage(b Backend, message *MessageMetadata) (*MessageMetadata, error)
+	ProcessMessage(b Backend, message *MessageMetadata) *MessageMetadata
 	Usage() string
 }
