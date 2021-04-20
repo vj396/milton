@@ -89,3 +89,10 @@ func optimizeDBClientConnection(db *sql.DB) error {
 	db.SetMaxIdleConns(defaultWaitTimeout)
 	return nil
 }
+
+func (c *Client) Close() {
+	err := c.DB.Close()
+	if err != nil {
+		c.logger.Error("could not close connection to db", zap.Error(err))
+	}
+}

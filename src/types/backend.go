@@ -9,12 +9,6 @@ type DatabaseMetadata struct {
 	Port     uint32 `yaml:"port,omitempty"`
 }
 
-type Membership struct {
-	Id          string
-	SLA         uint
-	ChannelName string
-}
-
 type Documents struct {
 	Id    uint
 	Title string
@@ -36,19 +30,14 @@ type Interrupt struct {
 }
 
 type Backend interface {
-	CreateMembershipRecord(m *Membership) error
-	GetMemebershipRecords(m *Membership) ([]Membership, error)
-	DeleteMembershipRecord(m *Membership) error
-
-	CreateDocmentsRecord(d *Documents) error
-	GetDocumentsRecords(d *Documents) ([]Documents, error)
-	DeleteDocumentsRecord(d *Documents) error
-
 	CreateOncallRecord(o *Oncall) error
 	GetOncallRecords(o *Oncall) ([]Oncall, error)
 	DeleteOncallRecord(o *Oncall) error
 
 	CreateInterruptRecord(i *Interrupt) error
 	GetInterruptRecords(i *Interrupt) ([]Interrupt, error)
+	GetInterruptRecordsForChannel(i *Interrupt) ([]Interrupt, error)
 	DeleteInterruptRecord(i *Interrupt) error
+
+	Close()
 }

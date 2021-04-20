@@ -18,10 +18,10 @@ func init() {
 	}
 }
 
-func (o *opsgenieCmd) ProcessMessage(message *types.MessageMetadata) (*types.ResponseMetadata, error) {
+func (o *opsgenieCmd) ProcessMessage(b types.Backend, message *types.MessageMetadata) (*types.MessageMetadata, error) {
 	return nil, nil
 }
 
 func (o *opsgenieCmd) Usage() string {
-	return `Usage <!opsgenie add 111-222-333> || <!opsgenie remove 111-222-333> || <!opsgenie list> || <!opsgenie SRE> || <!opsgenie infra>`
+	return "<!opsgenie add 111-222-333> || <!opsgenie remove 111-222-333> || <!opsgenie list> || <!opsgenie SRE> || <!opsgenie infra>"
 }

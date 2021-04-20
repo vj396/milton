@@ -31,9 +31,12 @@ func Client(slackConfig *types.Slack) (*socketmode.Client, error) {
 	}
 	apiClient = slacklib.New(
 		slackConfig.BotToken,
+		//slack.OptionDebug(true),
+		//slack.OptionLog(log.New(os.Stdout, "api: ", log.Lshortfile|log.LstdFlags)),
 		slacklib.OptionAppLevelToken(slackConfig.AppToken),
 	)
 	socketmodeClient := socketmode.New(apiClient)
+
 	return socketmodeClient, nil
 }
 
