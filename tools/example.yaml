@@ -1,0 +1,10 @@
+---
+database_metadata:
+  type: mysql
+  host: localhost
+  name: milton
+  user: milton
+  password: milton
+slack:
+  app_token: xapp-token
+  bot_token: xoxb-token

@@ -1,0 +1,24 @@
+---
+version: "3.9"
+services:
+  db:
+    image: mysql/mysql-server:8.0.23-1.1.19
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: miltonroot
+      MYSQL_DATABASE: milton
+      MYSQL_USER: milton
+      MYSQL_PASSWORD: milton
+  krusty:
+    depends_on:
+      - db
+    image: krusty:latest
+    command: /milton run -c /config.yaml -d /models
+    restart: always
+    network_mode: "host"
+volumes:
+  db_data: {}
