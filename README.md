@@ -1,4 +1,18 @@
 # milton
-This is Milton, it can do things...but can't make toast, yet.
+This is Milton, it is a slack bot.
 
-![alt text](.metadata/Milton.png)
+## Local Testing
+### Build Docker Container for the bot.
+```
+docker build -t milton .
+```
+### Bring Up Stack
+```
+docker-compose up -d
+```
+
+### Teardown Stack
+```
+docker-compose down
+docker volume rm milton_db_data
+```
