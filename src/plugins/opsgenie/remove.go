@@ -12,7 +12,7 @@ type opsgenieRmCmd struct{}
 
 func init() {
 	o := new(opsgenieRmCmd)
-	err := slack.Register("!opsgenie", o)
+	err := slack.Register("!opsgenie-rm", o)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "could not register slack command, err: %+v", err)
 	}
